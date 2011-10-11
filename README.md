@@ -13,7 +13,9 @@ of this in infinite loop.
 
 ## How does it look
 
-![hg-dude with notify-send](http://i.imgur.com/DRl2v)
+Ubuntu:
+
+![hg-dude with notify-send](http://i.imgur.com/DRl2v.png)
 
 ## Requirements
 
