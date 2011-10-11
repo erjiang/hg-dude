@@ -1,28 +1,15 @@
-# git-dude
+# hg-dude
 
-git-dude is a simple git desktop notifier. It monitors git repositories in
+hg-dude is a simple Mercurial desktop notifier. It monitors hg repositories in
 current directory for new commits/branches/tags and shows desktop notification if
 anything new arrived.
 
 ## How it works
 
-It simply uses `git fetch` and parses its output to see what has changed. Then it
-formats new commit messages with `git log` and shows desktop notification with
-`notify-send` / `kdialog` (Linux) or `growlnotify` (OSX). All of this in infinite loop.
-
-## How does it look
-
-Fedora:
-
-![git-dude on Fedora](https://github.com/downloads/sickill/git-dude/git-dude-fedora-shot.png)
-
-Ubuntu:
-
-![git-dude on Ubuntu](https://github.com/downloads/sickill/git-dude/git-dude-ubuntu-shot.png)
-
-OSX:
-
-![git-dude on Mac OSX](https://github.com/downloads/sickill/git-dude/git-dude-osx-shot.png)
+It simply uses `hg incoming` and parses its output to see what has changed.
+Then it shows desktop
+notification with `notify-send` / `kdialog` (Linux) or `growlnotify` (OSX). All
+of this in infinite loop.
 
 ## Requirements
 
@@ -38,29 +25,26 @@ On OSX:
 
 ## Installation
 
-    $ curl -skL https://github.com/sickill/git-dude/raw/master/git-dude >~/bin/git-dude
-    $ chmod +x ~/bin/git-dude
+    $ curl -skL https://github.com/erjiang/hg-dude/raw/master/hg-dude >~/bin/hg-dude
+    $ chmod +x ~/bin/hg-dude
 
-\* Make sure `~/bin` is in your `$PATH` or put `git-dude` script somewhere else
+\* Make sure `~/bin` is in your `$PATH` or put `hg-dude` script somewhere else
 on your `$PATH`.
 
 ## Usage
 
-git-dude iterates over repositories that live inside _the dude directory_. This
+hg-dude iterates over repositories that live inside _the dude directory_. This
 directory is nothing more than container for cloned repositories of projects
 you want to watch.  Name it like you want, here for example we use
-_~/.git-dude_:
+_~/.hg-dude_:
 
-    $ mkdir ~/.git-dude
-    $ cd ~/.git-dude
+    $ mkdir ~/.hg-dude
+    $ cd ~/.hg-dude
 
 Clone some repositories:
 
-    $ git clone --mirror https://github.com/joelthelion/autojump.git
-    $ git clone --mirror git://github.com/pyromaniac/hoof.git
-
-I recommend `git clone --mirror` - it doesn't checkout working directory so it
-saves some disk space for bigger projects.
+    $ hg clone ssh://hg@bitbucket.org/pypy/pypy
+    $ hg clone ssh://hg@bitbucket.org/jespern/django-piston
 
 Symlinked repositories work too. This way you can monitor already cloned
 projects:
@@ -69,35 +53,31 @@ projects:
 
 Now run this to monitor _pwd_:
 
-    $ git dude
+    $ hg-dude
 
 You can also pass directory name as first argument to specify which directory
 to monitor instead of _pwd_.
 
-    $ git dude ~/watched-repos
+    $ hg-dude ~/watched-repos
 
 This way you can have multiple _dude directories_ each being monitored by
-separate git-dude process.
+separate hg-dude process.
 
 ## Configuration
 
 ### Global
 
-Set how often git-dude should check for changes (in seconds, default: 60):
+Set how often hg-dude should check for changes (in seconds, default: 60):
 
-    $ git config --global dude.interval 30
+    $ export HG_DUDE_INTERVAL=30
 
 Set path to icon used by desktop notifications (default: none):
 
-    $ git config --global dude.icon ~/.git-dude/github_32.png
-
-### Per-repository
-
-Set path to icon used by desktop notifications for this repository (default:
-taken from global setting):
-
-    $ git config dude.icon ~/.git-dude/dm-core/datamapper.png
+    $ export HG_DUDE_ICON=~/my_icon.png
 
 ## Author
 
+Eric Jiang (http://ericjiang.com/ @ericrjiang)
+
+Based on git-dude by
 Marcin Kulik (http://ku1ik.com/ | @sickill)
