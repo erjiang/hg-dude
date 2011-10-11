@@ -11,6 +11,10 @@ Then it shows desktop
 notification with `notify-send` / `kdialog` (Linux) or `growlnotify` (OSX). All
 of this in infinite loop.
 
+## How does it look
+
+![hg-dude with notify-send](http://i.imgur.com/DRl2v)
+
 ## Requirements
 
 On Linux:
