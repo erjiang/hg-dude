@@ -1,9 +1,10 @@
 #!/bin/bash
 #
-# git-dude - Git commit notifier
-# https://github.com/sickill/git-dude
+# hg-dude - Mercurial commit notifier
+# https://github.com/erjiang/hg-dude
 #
 # Copyright (C) 2011 Marcin Kulik <http://ku1ik.com/>
+#                    Eric Jiang <http://ericjiang.com/>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Distributed under the GNU General Public License, version 2.0.
 
-interval=$(git config dude.interval)
+interval=$HG_DUDE_INTERVAL
 interval=${interval:-60}
 
 export LC_ALL=C # make sure git talks english
@@ -41,34 +42,19 @@ function notify() {
 
 while true; do
   for dir_name in *; do
-    if [[ -d "$dir_name" && $(cd "$dir_name"; git rev-parse --git-dir 2>/dev/null) ]]; then
-      repo_name=$(basename "$dir_name" .git)
+    if [[ -d "$dir_name" && $(cd "$dir_name"; hg identify 2>/dev/null) ]]; then
+      repo_name=$dir_name
       cd "$dir_name"
 
-      changes=$(git fetch 2>&1 | grep -F -- '->' | sed -E 's/^\s+\+\s+//')
+      changes=$(hg incoming --template '{desc} ({author})\n' | sed 's/ <.*>//' | sed '1,2d')
 
-      icon_path=$(git config dude.icon)
+      icon_path=$HG_DUDE_ICON
       icon_path=${icon_path:-`pwd`/icon.png}
       eval icon_path=$icon_path # to expand ~
-
-      while read -r line; do
-        case $line in
-          *..*)
-            commit_range=$(echo "$line" | awk '{ print $1 }')
-            branch_name=$(echo "$line" | awk '{ print $2 }')
-            commit_messages=$(git log $commit_range --pretty=format:'%s (%an)')
-            notify $icon_path "New commits in $repo_name/$branch_name" "$commit_messages"
-            ;;
-          *new\ branch*)
-            branch_name=$(echo "$line" | awk '{ print $4 }')
-            notify $icon_path "New branch $repo_name/$branch_name"
-            ;;
-          *new\ tag*)
-            tag_name=$(echo "$line" | awk '{ print $4 }')
-            notify $icon_path "New tag $repo_name/$tag_name"
-            ;;
-        esac
-      done <<< "$changes"
+      if [ "$changes" != "no changes found" ]; then
+        notify $icon_path "New commits in $repo_name" "$changes"
+        hg pull # :)
+      fi
 
       cd - &>/dev/null
     fi
